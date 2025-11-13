@@ -70,18 +70,37 @@
       position: relative;
       width: 100%;
       height: calc(100% - 30px);
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
     }
-    /* Pantallas */
+    .app::-webkit-scrollbar {
+      width: 4px;
+    }
+    .app::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .app::-webkit-scrollbar-thumb {
+      background: rgba(236, 72, 153, 0.3);
+      border-radius: 2px;
+    }
+    .app::-webkit-scrollbar-thumb:hover {
+      background: rgba(236, 72, 153, 0.5);
+    }
+    /* Secciones con scroll */
     .screen {
-      position: absolute;
-      inset: 0;
-      padding: 18px 18px 72px;
-      opacity: 0;
-      pointer-events: none;
+      position: relative;
+      width: 100%;
+      min-height: calc(100vh - 30px);
+      padding: 18px;
+      padding-bottom: 40px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      gap: 18px;
+    }
+    .screen:last-child {
+      padding-bottom: 80px;
     }
     .screen::before {
       content: "";
@@ -104,26 +123,6 @@
     .screen-2::before { background-image: url("5.jpg"); }
     .screen-3::before { background-image: url("1.jpg"); }
     .screen-4::before { background-image: url("4.jpg"); }
-    .screen.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .screen-enter-right {
-      animation: screenInRight 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-    .screen-enter-left {
-      animation: screenInLeft 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-    @keyframes screenInRight {
-      0% { opacity: 0; transform: translateX(40px) scale(0.96); }
-      60% { opacity: 1; transform: translateX(-4px) scale(1.02); }
-      100% { opacity: 1; transform: translateX(0) scale(1); }
-    }
-    @keyframes screenInLeft {
-      0% { opacity: 0; transform: translateX(-40px) scale(0.96); }
-      60% { opacity: 1; transform: translateX(4px) scale(1.02); }
-      100% { opacity: 1; transform: translateX(0) scale(1); }
-    }
     .tag {
       display: inline-block;
       font-size: 0.75rem;
@@ -340,55 +339,6 @@
       text-align: center;
       margin-top: 4px;
     }
-    /* Nav inferior */
-    .nav {
-      position: absolute;
-      bottom: 10px;
-      left: 0;
-      right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 18px;
-      font-size: 0.85rem;
-      color: #6b7280;
-    }
-    .dots {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: #e5e7eb;
-      border: 1px solid #d1d5db;
-      transition: width 0.18s ease, background 0.18s ease;
-    }
-    .dot.active {
-      width: 18px;
-      background: #ec4899;
-      box-shadow: 0 0 6px rgba(236,72,153,0.8);
-    }
-    .nav-btn {
-      background: #f9fafb;
-      border-radius: 999px;
-      padding: 5px 11px;
-      border: 1px solid #e5e7eb;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #374151;
-      font-size: 0.82rem;
-      font-family: "Poppins", system-ui, sans-serif;
-    }
-    .nav-btn span.icon { font-size: 1rem; }
-    .nav-btn:hover {
-      box-shadow: 0 6px 14px rgba(148,163,184,0.4);
-      transform: translateY(-1px);
-    }
     /* Modal foto grande */
     .modal {
       position: fixed;
@@ -444,22 +394,68 @@
       text-align: center;
       padding: 24px;
       z-index: 20;
-      transition: opacity 0.45s ease;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      animation: overlayFadeIn 0.8s ease;
+    }
+    @keyframes overlayFadeIn {
+      from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+      }
+      to {
+        opacity: 1;
+        backdrop-filter: blur(10px);
+      }
     }
     .start-overlay.hidden {
       opacity: 0;
       pointer-events: none;
+      transform: scale(0.95);
     }
     .start-title {
       font-family: "Baloo 2", system-ui, sans-serif;
       font-size: 1.5rem;
       margin-bottom: 10px;
       color: #111827;
+      animation: titleSlideIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.2s both;
+      position: relative;
+    }
+    @keyframes titleSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .start-title::after {
+      content: "💌";
+      display: inline-block;
+      animation: heartBeat 1.5s ease-in-out infinite;
+      margin-left: 8px;
+    }
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.2); }
+      50% { transform: scale(1); }
     }
     .start-subtitle {
       font-size: 0.9rem;
       color: #4b5563;
       margin-bottom: 18px;
+      animation: subtitleFadeIn 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.4s both;
+    }
+    @keyframes subtitleFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     .envelope-btn {
       width: 120px;
@@ -476,7 +472,54 @@
       box-shadow: 0 18px 40px rgba(88, 28, 135, 0.6);
       margin-bottom: 10px;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
+      animation: envelopeEntrance 1s cubic-bezier(0.23, 1, 0.32, 1) 0.6s both,
+                 envelopeFloat 3s ease-in-out infinite 1.6s,
+                 envelopePulse 2s ease-in-out infinite 1.6s;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    @keyframes envelopeEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.5) rotate(-180deg);
+      }
+      60% {
+        transform: translateY(-10px) scale(1.1) rotate(10deg);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+    @keyframes envelopeFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
+    }
+    @keyframes envelopePulse {
+      0%, 100% {
+        box-shadow: 0 18px 40px rgba(88, 28, 135, 0.6),
+                    0 0 0 0 rgba(236, 72, 153, 0.7);
+      }
+      50% {
+        box-shadow: 0 18px 40px rgba(88, 28, 135, 0.8),
+                    0 0 0 20px rgba(236, 72, 153, 0);
+      }
+    }
+    .envelope-btn::before {
+      content: "";
+      position: absolute;
+      inset: -15px;
+      border-radius: 42px;
+      background: linear-gradient(45deg, #ec4899, #8b5cf6, #0ea5e9, #ec4899);
+      background-size: 300% 300%;
+      z-index: -1;
+      opacity: 0.4;
+      animation: envelopeGlow 3s ease infinite;
+      filter: blur(20px);
+    }
+    @keyframes envelopeGlow {
+      0%, 100% { background-position: 0% 50%; transform: scale(1); }
+      50% { background-position: 100% 50%; transform: scale(1.1); }
     }
     .envelope-btn::after {
       content: "";
@@ -485,10 +528,50 @@
       background: radial-gradient(circle at top, rgba(255,255,255,0.4), transparent 60%);
       opacity: 0.8;
       pointer-events: none;
+      animation: envelopeShine 2.5s ease-in-out infinite;
+      border-radius: 32px;
+    }
+    @keyframes envelopeShine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+    }
+    .envelope-btn:hover {
+      transform: translateY(-8px) scale(1.08) rotate(5deg) !important;
+      box-shadow: 0 30px 60px rgba(88, 28, 135, 0.9),
+                  0 0 0 20px rgba(236, 72, 153, 0.2) !important;
+    }
+    .envelope-btn:active {
+      transform: translateY(-3px) scale(0.95) rotate(-8deg) !important;
     }
     .start-hint {
       font-size: 0.8rem;
       color: #6b7280;
+      animation: hintPulse 2s ease-in-out infinite 1s;
+      position: relative;
+    }
+    @keyframes hintPulse {
+      0%, 100% {
+        opacity: 0.5;
+        transform: translateY(0);
+      }
+      50% {
+        opacity: 1;
+        transform: translateY(-5px);
+      }
+    }
+    .start-hint::before {
+      content: "👆";
+      display: inline-block;
+      animation: fingerPoint 1.8s ease-in-out infinite;
+      margin-right: 6px;
+      font-size: 1.1em;
+    }
+    @keyframes fingerPoint {
+      0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+      25% { transform: translateX(8px) translateY(-8px) rotate(10deg); }
+      50% { transform: translateX(0) translateY(-15px) rotate(0deg); }
+      75% { transform: translateX(-8px) translateY(-8px) rotate(-10deg); }
     }
     /* Control música */
     .music-control {
@@ -512,20 +595,149 @@
       font-family: "Poppins", system-ui, sans-serif;
     }
     .music-btn span.icon { font-size: 1rem; }
-    /* Countdown en pantalla de detalles */
-    .countdown {
-      background: #fdf2ff;
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      color: #6b21a8;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 10px;
+    /* Diseño de detalles del evento estilo elegante */
+    .event-header {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(249, 245, 255, 0.98));
+      border-radius: 20px;
+      padding: 24px 18px;
+      margin: 20px 0;
+      box-shadow: 0 14px 30px rgba(148, 163, 184, 0.25);
+      position: relative;
     }
-    .countdown span.label {
+    .event-date-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .event-date-row::before,
+    .event-date-row::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    }
+    .event-date-row::before {
+      top: -10px;
+    }
+    .event-date-row::after {
+      bottom: -10px;
+    }
+    .event-day {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 0.9rem;
+      color: #8b6914;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .event-number {
+      text-align: center;
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: #1e7e34;
+      line-height: 1;
+    }
+    .event-month {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: #8b6914;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-top: 4px;
+    }
+    .event-time {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 0.9rem;
+      color: #8b6914;
+      font-weight: 500;
+      text-align: right;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .event-venue {
+      text-align: center;
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-size: 1.8rem;
+      color: #8b6914;
       font-weight: 600;
+      margin: 20px 0;
+      letter-spacing: 0.02em;
+    }
+    /* Countdown nuevo diseño */
+    .countdown-container {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 10px 25px rgba(148, 163, 184, 0.2);
+      text-align: center;
+    }
+    .countdown-label {
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: #6366f1;
+      font-weight: 600;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .countdown-numbers {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 12px 0;
+      font-family: "Baloo 2", system-ui, sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1;
+    }
+    .countdown-separator {
+      color: #9ca3af;
+      font-weight: 400;
+    }
+    .countdown-labels {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 8px;
+      font-family: "Poppins", system-ui, sans-serif;
+      font-size: 0.7rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .countdown-labels span {
+      min-width: 60px;
+      text-align: center;
+    }
+    @media (max-width: 400px) {
+      .countdown-numbers {
+        font-size: 2rem;
+        gap: 6px;
+      }
+      .countdown-labels {
+        gap: 20px;
+        font-size: 0.65rem;
+      }
+      .countdown-labels span {
+        min-width: 50px;
+      }
+      .event-number {
+        font-size: 2.8rem;
+      }
+      .event-venue {
+        font-size: 1.5rem;
+      }
     }
     /* Mapa embed */
     .map-card {
@@ -542,37 +754,70 @@
       height: 120px;
       border: 0;
     }
-    /* Animaciones de entrada escalonadas */
-    .screen.active .tag {
-      animation: fadeInUp 0.6s ease 0.1s both;
+    /* Animaciones de entrada con scroll - inician ocultas */
+    .screen {
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
-    .screen.active h1 {
-      animation: fadeInUp 0.6s ease 0.2s both;
+    .screen.visible {
+      opacity: 1;
     }
-    .screen.active .subtitle {
-      animation: fadeInUp 0.6s ease 0.3s both;
+    /* Elementos inician ocultos hasta que su sección sea visible */
+    .screen:not(.visible) .tag,
+    .screen:not(.visible) h1,
+    .screen:not(.visible) .subtitle,
+    .screen:not(.visible) .carousel,
+    .screen:not(.visible) .pill,
+    .screen:not(.visible) .card-soft,
+    .screen:not(.visible) .event-header,
+    .screen:not(.visible) .countdown-container,
+    .screen:not(.visible) .gallery-strip,
+    .screen:not(.visible) .buttons .btn {
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
     }
-    .screen.active .carousel {
-      animation: fadeInUp 0.6s ease 0.4s both;
+    /* Animaciones escalonadas cuando la sección es visible */
+    .screen.visible .tag {
+      animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.1s both;
     }
-    .screen.active .pill,
-    .screen.active .card-soft {
-      animation: fadeInUp 0.6s ease 0.5s both;
+    .screen.visible h1 {
+      animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.2s both;
     }
-    .screen.active .buttons .btn {
-      animation: fadeInUp 0.5s ease both;
+    .screen.visible .subtitle {
+      animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
     }
-    .screen.active .buttons .btn:nth-child(1) { animation-delay: 0.4s; }
-    .screen.active .buttons .btn:nth-child(2) { animation-delay: 0.5s; }
-    .screen.active .buttons .btn:nth-child(3) { animation-delay: 0.6s; }
+    .screen.visible .carousel {
+      animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.4s both;
+    }
+    .screen.visible .pill {
+      animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.5s both;
+    }
+    .screen.visible .card-soft {
+      animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.6s both;
+    }
+    .screen.visible .event-header {
+      animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.2s both;
+    }
+    .screen.visible .countdown-container {
+      animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.4s both;
+    }
+    .screen.visible .gallery-strip {
+      animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) 0.5s both;
+    }
+    .screen.visible .buttons .btn {
+      animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+    }
+    .screen.visible .buttons .btn:nth-child(1) { animation-delay: 0.6s; }
+    .screen.visible .buttons .btn:nth-child(2) { animation-delay: 0.7s; }
+    .screen.visible .buttons .btn:nth-child(3) { animation-delay: 0.8s; }
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(40px) scale(0.95);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
     /* Animaciones flotantes */
@@ -767,25 +1012,6 @@
       0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
       50% { opacity: 0.5; transform: translateY(-50%) scale(1.2); }
     }
-    /* Scroll suave en las pantallas */
-    .screen {
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-    }
-    .screen::-webkit-scrollbar {
-      width: 4px;
-    }
-    .screen::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .screen::-webkit-scrollbar-thumb {
-      background: rgba(236, 72, 153, 0.3);
-      border-radius: 2px;
-    }
-    .screen::-webkit-scrollbar-thumb:hover {
-      background: rgba(236, 72, 153, 0.5);
-    }
     @media (max-width: 480px) {
       .phone { height: 640px; }
       .screen { padding: 16px 14px 70px; }
@@ -824,7 +1050,7 @@
       </div>
       <div class="app">
         <!-- Pantalla 1 -->
-        <section class="screen screen-1 active screen-enter-right" data-screen="0">
+        <section class="screen screen-1 visible">
           <div>
             <div class="tag">Fiesta de Despedida</div>
             <h1>Prom 2025 · Colegio Nuestra Señora de Fátima</h1>
@@ -865,66 +1091,54 @@
             </div>
           </div>
         </section>
-        <!-- Pantalla 2: Detalles + countdown + mapa -->
-        <section class="screen screen-2" data-screen="1">
-          <div>
-            <div class="tag">Detalles del evento</div>
-            <div class="countdown">
-              <span class="icon">⏳</span>
-              <span class="label">Faltan:</span>
-              <span id="countdownText">—</span>
+        <!-- Pantalla 2: Detalles del evento -->
+        <section class="screen screen-2">
+          <div class="event-header">
+            <div class="event-date-row">
+              <div class="event-day">JUEVES</div>
+              <div style="text-align: center;">
+                <div class="event-number">27</div>
+                <div class="event-month">NOVIEMBRE</div>
+              </div>
+              <div class="event-time">A LAS<br>4:30 pm</div>
             </div>
-            <p class="subtitle">
-              Aparta la fecha, arma tu outfit y llega puntual: la historia del Prom 2025 también se escribe en esta despedida. ✨
-            </p>
+            <div class="event-venue">Sandunga Boulevard Rose</div>
           </div>
-          <div class="bottom">
-            <div class="grid-2">
-              <div class="card-soft">
-                <h2>Cuándo</h2>
-                <div class="info-row">
-                  <span class="icon">📅</span>
-                  <span><strong>Jueves 27 de noviembre de 2025</strong></span>
-                </div>
-                <div class="info-row">
-                  <span class="icon">⏰</span>
-                  <span><strong>4:30 p.m.</strong></span>
-                </div>
-                <div class="info-row">
-                  <span class="icon">⭐</span>
-                  <span>Llega un poco antes para disfrutar desde el inicio.</span>
-                </div>
-              </div>
-              <div class="card-soft">
-                <h2>Dónde</h2>
-                <div class="info-row">
-                  <span class="icon">📍</span>
-                  <span><strong>Sandunga Boulevard Rose</strong></span>
-                </div>
-                <div class="info-row">
-                  <span class="icon">🎟️</span>
-                  <span>Evento preparado especialmente para el Prom 2025.</span>
-                </div>
-                <div class="info-row">
-                  <span class="icon">💌</span>
-                  <span>Invitan los estudiantes de grado décimo.</span>
-                </div>
-              </div>
+          
+          <div class="countdown-container">
+            <div class="countdown-label">Faltan pocos días</div>
+            <div class="countdown-numbers">
+              <span id="countdownDays">13</span>
+              <span class="countdown-separator">:</span>
+              <span id="countdownHours">11</span>
+              <span class="countdown-separator">:</span>
+              <span id="countdownMinutes">56</span>
             </div>
-            <div class="card-soft map-card">
-              <h2>Mapa del lugar</h2>
-              <div class="map-embed">
-                <iframe 
-                  src="https://www.google.com/maps?q=Sandunga+Boulevard+Rose&output=embed"
-                  loading="lazy"
-                  referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
-              </div>
+            <div class="countdown-labels">
+              <span>DÍAS</span>
+              <span>HORAS</span>
+              <span>MINUTOS</span>
+            </div>
+          </div>
+
+          <div class="card-soft">
+            <h2>📍 Ubicación</h2>
+            <p style="margin-bottom: 10px;">
+              <strong>Sandunga Boulevard Rose</strong><br>
+              Evento preparado especialmente para el Prom 2025.<br>
+              Invitan los estudiantes de grado décimo.
+            </p>
+            <div class="map-embed" style="margin-top: 12px;">
+              <iframe 
+                src="https://www.google.com/maps?q=Sandunga+Boulevard+Rose&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
             </div>
           </div>
         </section>
         <!-- Pantalla 3 -->
-        <section class="screen screen-3" data-screen="2">
+        <section class="screen screen-3">
           <div>
             <div class="tag">Recuerdos</div>
             <h1>Momentos que nunca se olvidan</h1>
@@ -954,7 +1168,7 @@
           </div>
         </section>
         <!-- Pantalla 4 -->
-        <section class="screen screen-4" data-screen="3">
+        <section class="screen screen-4">
           <div>
             <div class="tag">Confirma tu asistencia</div>
             <h1>¿Te unes a la despedida?</h1>
@@ -1000,16 +1214,6 @@
             </div>
           </div>
         </section>
-        <!-- Nav inferior -->
-        <div class="nav">
-          <button class="nav-btn" id="prevBtn">
-            <span class="icon">⬅</span> Atrás
-          </button>
-          <div class="dots" id="dots"></div>
-          <button class="nav-btn" id="nextBtn">
-            Siguiente <span class="icon">➡</span>
-          </button>
-        </div>
       </div>
     </div>
   </div>
@@ -1152,119 +1356,43 @@
       resetCarouselInterval();
     });
     
-    // También pausar cuando se muestra la pantalla 1
-    const screen1 = document.querySelector('.screen-1');
-    const observer = new MutationObserver(() => {
-      if (screen1.classList.contains('active')) {
-        resetCarouselInterval();
-      } else {
-        if (carouselInterval) clearInterval(carouselInterval);
-      }
-    });
-    observer.observe(screen1, { attributes: true, attributeFilter: ['class'] });
+    // El carrusel está siempre activo en la primera sección (scroll vertical)
 
-    // Navegación entre pantallas
+    // Animaciones con scroll - Intersection Observer (funciona en ambas direcciones)
     const screens = document.querySelectorAll('.screen');
-    const dotsContainer = document.getElementById('dots');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    let currentScreen = 0;
-
-    function renderDots() {
-      dotsContainer.innerHTML = '';
-      screens.forEach((_, i) => {
-        const d = document.createElement('div');
-        d.classList.add('dot');
-        if (i === currentScreen) d.classList.add('active');
-        d.addEventListener('click', () => goToScreen(i, i > currentScreen ? 'right' : 'left'));
-        dotsContainer.appendChild(d);
-      });
-    }
-
-    function goToScreen(index, direction = 'right') {
-      if (index < 0 || index >= screens.length || index === currentScreen) return;
-      screens.forEach((s) => {
-        s.classList.remove('active', 'screen-enter-right', 'screen-enter-left');
-      });
-      const incoming = screens[index];
-      incoming.classList.add('active');
-      // forzar reflow
-      void incoming.offsetWidth;
-      incoming.classList.add(direction === 'right' ? 'screen-enter-right' : 'screen-enter-left');
-      currentScreen = index;
-      renderDots();
-    }
-
-    prevBtn.addEventListener('click', () => {
-      const next = currentScreen - 1 < 0 ? 0 : currentScreen - 1;
-      goToScreen(next, 'left');
-    });
-
-    nextBtn.addEventListener('click', () => {
-      const next = currentScreen + 1 >= screens.length ? screens.length - 1 : currentScreen + 1;
-      goToScreen(next, 'right');
-    });
-
-    // Swipe en móviles mejorado
-    let startX = null;
-    let startY = null;
-    const appEl = document.querySelector('.app');
     
-    appEl.addEventListener('touchstart', (e) => {
-      // No procesar swipe si estamos tocando el carrusel
-      if (e.target.closest('#carousel')) return;
-      startX = e.touches[0].clientX;
-      startY = e.touches[0].clientY;
-    });
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.2 // Se activa cuando el 20% de la sección es visible
+    };
     
-    appEl.addEventListener('touchmove', (e) => {
-      if (startX === null || startY === null) return;
-      // No procesar swipe si estamos tocando el carrusel
-      if (e.target.closest('#carousel')) return;
-    });
-    
-    appEl.addEventListener('touchend', (e) => {
-      if (startX === null || startY === null) return;
-      // No procesar swipe si estamos tocando el carrusel
-      if (e.target.closest('#carousel')) return;
-      
-      const endX = e.changedTouches[0].clientX;
-      const endY = e.changedTouches[0].clientY;
-      const diffX = endX - startX;
-      const diffY = endY - startY;
-      
-      // Solo procesar swipe horizontal si es mayor que el vertical
-      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 60) {
-        if (diffX < 0) {
-          // Swipe izquierda - siguiente pantalla
-          nextBtn.click();
-          // Feedback visual
-          nextBtn.style.transform = 'scale(0.9)';
-          setTimeout(() => { nextBtn.style.transform = 'scale(1)'; }, 200);
+    const screenObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Agregar clase visible cuando entra en el viewport
+          entry.target.classList.add('visible');
+          // Forzar reinicio de animaciones removiendo y re-agregando la clase
+          // Esto asegura que las animaciones se ejecuten cada vez que entra en vista
+          void entry.target.offsetWidth; // Forzar reflow
         } else {
-          // Swipe derecha - pantalla anterior
-          prevBtn.click();
-          // Feedback visual
-          prevBtn.style.transform = 'scale(0.9)';
-          setTimeout(() => { prevBtn.style.transform = 'scale(1)'; }, 200);
+          // Quitar clase visible cuando sale del viewport (para que se reactive al volver)
+          entry.target.classList.remove('visible');
+          // Resetear elementos para que las animaciones se reinicien
+          const animatedElements = entry.target.querySelectorAll('.tag, h1, .subtitle, .carousel, .pill, .card-soft, .event-header, .countdown-container, .gallery-strip, .buttons .btn');
+          animatedElements.forEach(el => {
+            el.style.animation = 'none';
+            void el.offsetWidth; // Forzar reflow
+            el.style.animation = null;
+          });
         }
-      }
-      startX = null;
-      startY = null;
-    });
+      });
+    }, observerOptions);
     
-    // Agregar feedback visual en los botones de navegación
-    prevBtn.addEventListener('click', () => {
-      prevBtn.style.transform = 'scale(0.9)';
-      setTimeout(() => { prevBtn.style.transform = 'scale(1)'; }, 200);
+    // Observar todas las secciones (incluyendo la primera para que funcione al subir)
+    screens.forEach((screen) => {
+      screenObserver.observe(screen);
     });
-    
-    nextBtn.addEventListener('click', () => {
-      nextBtn.style.transform = 'scale(0.9)';
-      setTimeout(() => { nextBtn.style.transform = 'scale(1)'; }, 200);
-    });
-
-    renderDots();
 
     // Modal fotos
     const galleryStrip = document.getElementById('galleryStrip');
@@ -1332,8 +1460,10 @@
       }
     });
 
-    // Countdown en pantalla de detalles
-    const countdownText = document.getElementById('countdownText');
+    // Countdown actualizado para nuevo diseño
+    const countdownDaysEl = document.getElementById('countdownDays');
+    const countdownHoursEl = document.getElementById('countdownHours');
+    const countdownMinutesEl = document.getElementById('countdownMinutes');
     // Fecha del evento (zona horaria Colombia UTC-5)
     const eventDate = new Date('2025-11-27T16:30:00-05:00');
 
@@ -1341,15 +1471,19 @@
       const now = new Date();
       const diff = eventDate - now;
       if (diff <= 0) {
-        countdownText.textContent = '¡Es hoy! 🎉';
+        countdownDaysEl.textContent = '0';
+        countdownHoursEl.textContent = '0';
+        countdownMinutesEl.textContent = '0';
         return;
       }
       const totalSeconds = Math.floor(diff / 1000);
       const days = Math.floor(totalSeconds / (3600 * 24));
       const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
-      countdownText.textContent =
-        days + ' días · ' + hours + ' h · ' + minutes + ' min';
+      
+      countdownDaysEl.textContent = days.toString().padStart(2, '0');
+      countdownHoursEl.textContent = hours.toString().padStart(2, '0');
+      countdownMinutesEl.textContent = minutes.toString().padStart(2, '0');
     }
 
     updateCountdown();
