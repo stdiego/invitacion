@@ -339,6 +339,18 @@
       text-align: center;
       margin-top: 4px;
     }
+    .closing-note {
+      font-size: 0.88rem;
+      color: #374151;
+      text-align: center;
+      margin: 18px auto 20px;
+      max-width: 320px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid rgba(209, 213, 219, 0.8);
+      box-shadow: 0 12px 30px rgba(148, 163, 184, 0.25);
+    }
     /* Modal foto grande */
     .modal {
       position: fixed;
@@ -967,6 +979,57 @@
     .modal-close {
       transition: all 0.3s ease;
     }
+    .form-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 60;
+      backdrop-filter: blur(4px);
+    }
+    .form-modal.open {
+      display: flex;
+    }
+    .form-modal-content {
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.5);
+      padding: 12px;
+      position: relative;
+      animation: popIn 0.35s cubic-bezier(0.23,1,0.32,1);
+    }
+    .form-modal iframe {
+      width: 100%;
+      height: 560px;
+      border: 0;
+      border-radius: 14px;
+      background: #fff;
+    }
+    .form-modal-close {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: none;
+      background: #f9fafb;
+      color: #111827;
+      cursor: pointer;
+      font-size: 1.2rem;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.4);
+      transition: all 0.3s ease;
+    }
+    .form-modal-close:hover {
+      transform: scale(1.05);
+      background: #ec4899;
+      color: #fff;
+    }
     /* Animación de carga sutil */
     @keyframes shimmer {
       0% { background-position: -1000px 0; }
@@ -1086,7 +1149,7 @@
                 Después de tantos trabajos, clases, risas y retos compartidos, 
                 esta fiesta es el cierre perfecto para el 
                 <span class="highlight-word">Prom 2025 NSF</span>.  
-                Ven con la mejor actitud y listo para vivir una tarde inolvidable.
+                Ven con la mejor actitud y listo para vivir una experiencia inolvidable llena de momentos para recordar.
               </p>
             </div>
           </div>
@@ -1135,6 +1198,10 @@
                 referrerpolicy="no-referrer-when-downgrade">
               </iframe>
             </div>
+          </div>
+          <div class="pill" style="background:#fff7ed;border-color:#fed7aa;">
+            <span class="icon">🤵‍♀️</span>
+            Traje formal: ven elegante y listo para lucirte en cada foto.
           </div>
         </section>
         <!-- Pantalla 3 -->
@@ -1190,14 +1257,10 @@
                   Ver ubicación en el mapa
                 </a>
                 <!-- CAMBIA EL NÚMERO DE WHATSAPP AQUÍ -->
-                <a
-                  class="btn btn-primary"
-                  href="https://wa.me/573000000000?text=Hola,%20confirmo%20mi%20asistencia%20a%20la%20Fiesta%20de%20Despedida%20Prom%202025%20🎓🎉"
-                  target="_blank" rel="noopener noreferrer"
-                >
+                <button class="btn btn-primary" id="openFormBtn" type="button">
                   <span class="icon">✅</span>
-                  Confirmar asistencia por WhatsApp
-                </a>
+                  Confirmar asistencia
+                </button>
                 <a
                   class="btn btn-tertiary"
                   href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Fiesta+de+Despedida+Prom+2025&details=Tu+esfuerzo+y+dedicaci%C3%B3n+te+han+tra%C3%ADdo+hasta+aqu%C3%AD;+el+futuro+est%C3%A1+listo+para+recibirte.&location=Sandunga+Boulevard+Rose&dates=20251127T213000Z/20251127T233000Z"
@@ -1207,11 +1270,10 @@
                   Agregar a mi calendario
                 </a>
               </div>
-              <p class="note">
-                Tu presencia hace la diferencia.  
-                ¡Te esperamos en la Fiesta de Despedida Prom 2025! 💖
-              </p>
             </div>
+            <p class="closing-note">
+              Invitan estudiantes y padres de familia grado décimo.
+            </p>
           </div>
         </section>
       </div>
@@ -1222,6 +1284,16 @@
     <div class="modal-content">
       <button class="modal-close" id="modalClose">&times;</button>
       <img src="" alt="Foto grande" id="modalImg">
+    </div>
+  </div>
+  <!-- Modal formulario -->
+  <div class="form-modal" id="formModal">
+    <div class="form-modal-content">
+      <button class="form-modal-close" id="formModalClose">&times;</button>
+      <iframe
+        src="https://docs.google.com/forms/d/e/1FAIpQLSd4p2XEs84c4OHRZ69m8xIWn-1Pc-sp7JY9q0o81cCqbtyvoA/viewform?usp=dialog"
+        title="Formulario Prom 2025"
+      ></iframe>
     </div>
   </div>
   <script>
@@ -1488,6 +1560,28 @@
 
     updateCountdown();
     setInterval(updateCountdown, 60000); // actualizar cada minuto
+
+    const formModal = document.getElementById('formModal');
+    const openFormBtn = document.getElementById('openFormBtn');
+    const formModalClose = document.getElementById('formModalClose');
+
+    if (openFormBtn && formModal) {
+      openFormBtn.addEventListener('click', () => {
+        formModal.classList.add('open');
+      });
+    }
+
+    if (formModalClose) {
+      formModalClose.addEventListener('click', () => formModal.classList.remove('open'));
+    }
+
+    if (formModal) {
+      formModal.addEventListener('click', (e) => {
+        if (e.target === formModal) {
+          formModal.classList.remove('open');
+        }
+      });
+    }
   </script>
 </body>
 </html>
